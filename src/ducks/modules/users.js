@@ -1,30 +1,26 @@
 /**************************************
 * Tipos de acciones para los usuarios *
 ***************************************/
-const LOGIN = 'my-app/auth/LOGIN';
-const LOGIN_SUCCESS = 'my-app/auth/LOGIN_SUCCESS';
-const LOGIN_FAIL = 'redux-example/auth/LOGIN_FAIL';
+import request from '../../utils/api/ServerRequest';
+import { env } from '../../config/env';
+
+const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+const LOGIN_FAIL = 'LOGIN_FAIL';
 
 const initialState = {};
+
 
 // Funcion reducer donde se manejará el tipo de action
 export default function reducer(state = initialState, action = {}) {
     switch (action.type) {
-      case LOGIN:
+      case 'LOGIN_SUCCESS':
         return {
           ...state,
-          loggingIn: true
-        };
-      case LOGIN_SUCCESS:
-        return {
-          ...state,
-          loggingIn: false,
           user: action.result
         };
-      case LOGIN_FAIL:
+      case 'LOGIN_FAIL':
         return {
           ...state,
-          loggingIn: false,
           user: null,
           loginError: action.error
         };
@@ -32,14 +28,23 @@ export default function reducer(state = initialState, action = {}) {
         return state;
     }
 }
+
 /*******************************************
 * Action creator para el login del usuario *
 ********************************************/
-export function login(email, password) {
-    return {
-      types: [LOGIN, LOGIN_SUCCESS, LOGIN_FAIL],
-      promise: () => {
-        
-      }
-    };
+export async function login(email, password, callback) {
+  let authentication = {
+    email: email,
+    password: password
+  }
+
+  request.post(env.apiEndpoint + '/login', authentication).then(async result => {
+    let response = await reducer(result, {type: LOGIN_SUCCESS});
+    callback(response.data);
+  })
+  .catch(async error => {
+    let err = await reducer(error, {type: LOGIN_FAIL}); 
+    callback(err);
+  })
 }
+

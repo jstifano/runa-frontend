@@ -1,6 +1,6 @@
 import { createStore, combineReducers } from 'redux';
-import appReducer from "../ducks/modules/create";
-import { reducer as formReducer } from 'redux-form'
+import { appReducer }  from "../ducks/modules/create";
+import { reducer as formReducer } from 'redux-form';
 
 const reducers = {
     form: formReducer,

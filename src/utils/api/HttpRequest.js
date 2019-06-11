@@ -1,4 +1,5 @@
 import { env } from '../../config/env';
+import axios from 'axios';
 
 export default class HttpRequest {
 

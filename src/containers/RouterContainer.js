@@ -7,7 +7,8 @@ import {
   Redirect
 } from "react-router-dom";
 import { login } from '../ducks/modules/users';
-import LoginComponent from '../components/LoginComponent';
+import LoginComponent from '../components/auth/LoginComponent';
+import AdminDashboardComponent from '../components/admin_dashboard/AdminDashboardComponent';
 
 class RouterContainer extends Component {
 
@@ -42,6 +43,7 @@ class RouterContainer extends Component {
         <Switch location={this.props.location}>
           <Route exact path="/" render={()=> <Redirect to="/login" />}/>
           <Route exact path="/login" component={LoginComponent} />
+          <Route exact path="/admin" component={AdminDashboardComponent} />
         </Switch>
       </Router>
     )

@@ -1,4 +1,4 @@
-import { createValidator, required, maxLength, email, minLength } from '../utils/validations';
+import { createValidator, required, maxLength, email, minLength } from '../../utils/validations';
 
 const loginValidation = createValidator({
   email: [required, email], // Valido que el email sea requerido y cumpla con la REGEX

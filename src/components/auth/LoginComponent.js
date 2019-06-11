@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import './LoginComponent.css';
-import imageLogo from '../assets/images/logo_login.jpg';
+import imageLogo from '../../assets/images/logo_login.jpg';
 
 import { connect } from "react-redux";
 import { withRouter } from 'react-router';
 import { reduxForm, Field } from 'redux-form';
-import { login } from '../ducks/modules/users';
+import { login } from '../../ducks/modules/users';
 
 const validate = values => {
     const errors = {}
@@ -40,14 +40,40 @@ const renderField = ({
 
 class LoginComponent extends Component {
 
+    componentWillMount = () => {
+        let session = localStorage.getItem('user');
+        if(session){
+            session = JSON.parse(session);
+            if(session.role === 'admin'){
+                this.props.history.push('/admin');
+            }
+            else {
+                this.props.history.push('/employee');
+            }
+        }
+    }
+
+    /*******************************************************
+    * Manipulacion del evento click en formulario de login *
+    ********************************************************/
     handleClick = (event) => {
         event.preventDefault();
         if('syncErrors' in this.props.state.form.login){
-            console.log("Formulario malo");
             return;
         }
         else {
-            console.log("Formulario bueno");
+            let email = this.props.state.form.login.values.email;
+            let password = this.props.state.form.login.values.password;
+            
+            // Generador de acción en Redux para el login de usuario
+            login(email, password, response => {
+                if(response.authenticate){
+                    localStorage.setItem('user', JSON.stringify(response['user']) );
+                    response.user.role === 'admin' ? this.props.history.push('/admin') :  this.props.history.push('/employee')
+                }
+            }, error => {
+                console.log(error);
+            })
         }
     }
 
@@ -67,25 +93,18 @@ class LoginComponent extends Component {
     }
 }
 
+// Redux form para el login
 LoginComponent = reduxForm({
     form: 'login',
     fields: ['email', 'password'],
     validate: validate
 })(LoginComponent);
 
+// Mapeo de states a props del componente
 const mapStateToProps = (state) => {
     return {
       state: state
     };
 };
-  
-  
-const mapDispatchToProps = (dispatch, ownProps) => {
-    return {
-        login: (email, password, onSuccess, onFail) => {
-            dispatch(login(email, password, onSuccess, onFail));
-        }
-    }
-}
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(LoginComponent));
+export default withRouter(connect(mapStateToProps, null)(LoginComponent));
