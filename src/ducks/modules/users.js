@@ -6,24 +6,31 @@ import { env } from '../../config/env';
 
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 const LOGIN_FAIL = 'LOGIN_FAIL';
+const GET_USERS_SUCCESS  = 'GET_USERS_SUCCESS';
+const GET_USERS_FAIL  = 'GET_USERS_FAIL';
 
 const initialState = {};
 
-
 // Funcion reducer donde se manejará el tipo de action
-export default function reducer(state = initialState, action = {}) {
+export default function userReducer(state = initialState, action = {}) {
     switch (action.type) {
       case 'LOGIN_SUCCESS':
         return {
-          ...state,
-          user: action.result
+          user: action.payload
         };
       case 'LOGIN_FAIL':
         return {
-          ...state,
           user: null,
-          loginError: action.error
+          loginError: action.payload
         };
+      case 'GET_USERS_SUCCESS': 
+        return {
+          users: action.payload.data.users,
+        };
+      case 'GET_USERS_FAIL':   
+        return {
+          users: []
+        };  
       default:
         return state;
     }
@@ -39,11 +46,25 @@ export async function login(email, password, callback) {
   }
 
   request.post(env.apiEndpoint + '/login', authentication).then(async result => {
-    let response = await reducer(result, {type: LOGIN_SUCCESS});
-    callback(response.data);
+    let response = await userReducer(result, {type: LOGIN_SUCCESS, payload: result});
+    callback(response.user.data);
   })
   .catch(async error => {
-    let err = await reducer(error, {type: LOGIN_FAIL}); 
+    let err = await userReducer(error, {type: LOGIN_FAIL, payload: error}); 
+    callback(err);
+  })
+}
+
+/********************************************
+* Action creator para obtener los empleados * 
+*********************************************/
+export async function getUsers(id, callback) {
+  request.get(env.apiEndpoint + '/users/'+id).then(async result => {
+    let response = await userReducer(result, {type: GET_USERS_SUCCESS, payload: result});
+    callback(response);
+  })
+  .catch(async error => {
+    let err = await userReducer(error, {type: GET_USERS_FAIL, payload: error}); 
     callback(err);
   })
 }

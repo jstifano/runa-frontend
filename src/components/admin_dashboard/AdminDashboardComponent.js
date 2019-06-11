@@ -1,11 +1,33 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { withRouter } from 'react-router';
+import { getUsers } from '../../ducks/modules/users';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import * as Icons from '@fortawesome/free-solid-svg-icons';
 
 class AdminDashboardComponent extends Component {
+
+    constructor(props){
+        super(props);
+        this.state = {
+            users: []
+        };
+    }
+
     componentWillMount = () => {
-        let session = localStorage.getItem('user');
-        if(!session) this.props.history.push('/login');
+        let session = localStorage.getItem('user'); // Obtengo la sesion del localStorage
+        if(!session) this.props.history.push('/login'); // Si no estoy autenticado, mando a login
+    }
+
+    componentDidMount = () => {
+        let user = JSON.parse(localStorage.getItem('user'));
+        getUsers(user.id, response => {
+            this.setState({
+                users: response.users
+            })
+        }, error => {
+            console.log(error);
+        })
     }
 
     logout = () => {
@@ -27,26 +49,26 @@ class AdminDashboardComponent extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Mark</td>
-                            <td>Otto</td>
-                            <td>otto@gmail.com</td>
-                            <td>admin</td>
-                        </tr>
+                        {
+                            this.state.users.map(user => {
+                                return <tr key={user.id}>
+                                    <td>{user.first_name}</td>
+                                    <td>{user.last_name}</td>
+                                    <td>{user.email}</td>
+                                    <td>{user.role}</td>
+                                    <td>
+                                        <FontAwesomeIcon icon={Icons.faEdit} />
+                                    </td>
+                                </tr>
+                            })
+                        }
                     </tbody>
                 </table>
-                <button className="btn btn-info ml-5" style={{width: '10%'}} onClick={this.logout}> Cerrar sesión </button>
+                <button className="btn btn-primary ml-5" style={{width: '10%'}} onClick={this.logout}> Cerrar sesión </button>
             </div>
         )
     }
 }
 
-// Mapeo de states a props del componente
-const mapStateToProps = (state) => {
-    return {
-      state: state
-    };
-};
-
-export default withRouter(connect(mapStateToProps, null)(AdminDashboardComponent));
+export default withRouter(connect(null, null)(AdminDashboardComponent));
 
