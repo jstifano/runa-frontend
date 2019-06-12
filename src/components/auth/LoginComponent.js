@@ -10,6 +10,7 @@ import withReactContent from 'sweetalert2-react-content';
 
 const MySwal = withReactContent(Swal);
 
+// Validaciones del formulario de Redux-Form
 const validate = values => {
     const errors = {}
     if (!values.email) {
@@ -27,6 +28,7 @@ const validate = values => {
     return errors
 }
 
+// Renderizado dinámico de los campos del formulario
 const renderField = ({
     input,
     label,
@@ -70,6 +72,7 @@ class LoginComponent extends Component {
             
             // Generador de acción en Redux para el login de usuario
             login(email, password, response => {
+                // Si se autentica, ejecuto modal exitosa y redirecciono al dashboard dependiendo
                 if(response.authenticate){
                     localStorage.setItem('user', JSON.stringify(response['user']) );
                     MySwal.fire({
@@ -92,7 +95,7 @@ class LoginComponent extends Component {
                         timer: 3000
                     })
                 }
-            }, error => {
+            }, error => { // Ocurrió un error al iniciar sesión.
                 MySwal.fire({
                     title: 'Inicio de sesión fallido.',
                     type: 'error',
