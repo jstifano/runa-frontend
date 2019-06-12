@@ -6,9 +6,10 @@ import {
   Switch,
   Redirect
 } from "react-router-dom";
-import { login } from '../ducks/modules/users';
 import LoginComponent from '../components/auth/LoginComponent';
 import AdminDashboardComponent from '../components/admin_dashboard/AdminDashboardComponent';
+import TableEntryByEmployee from '../components/admin_dashboard/TableEntryByEmployee';
+import FormEditEmployee from '../components/admin_dashboard/FormEditEmployee';
 
 class RouterContainer extends Component {
 
@@ -44,24 +45,12 @@ class RouterContainer extends Component {
           <Route exact path="/" render={()=> <Redirect to="/login" />}/>
           <Route exact path="/login" component={LoginComponent} />
           <Route exact path="/admin" component={AdminDashboardComponent} />
+          <Route exact path="/entries/:id" component={TableEntryByEmployee} />
+          <Route exact path="/employee/edit/:id" component={FormEditEmployee} />
         </Switch>
       </Router>
     )
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    users: state
-  };
-};
-
-const mapDispatchToProps = (dispatch, ownProps) => {
-  return {
-    login: (email, password) => {
-      dispatch(login(email, password))
-    }
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(RouterContainer);
+export default connect(null, null)(RouterContainer);

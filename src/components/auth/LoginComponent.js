@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import './LoginComponent.css';
 import imageLogo from '../../assets/images/logo_login.jpg';
-
 import { connect } from "react-redux";
 import { withRouter } from 'react-router';
 import { reduxForm, Field } from 'redux-form';
 import { login } from '../../ducks/modules/users';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 const validate = values => {
     const errors = {}
@@ -69,10 +72,35 @@ class LoginComponent extends Component {
             login(email, password, response => {
                 if(response.authenticate){
                     localStorage.setItem('user', JSON.stringify(response['user']) );
+                    MySwal.fire({
+                        title: 'Inicio de sesión exitoso.',
+                        type: 'success',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    })
                     response.user.role === 'admin' ? this.props.history.push('/admin') :  this.props.history.push('/employee')
                 }
+                else {
+                    MySwal.fire({
+                        title: 'Credenciales inválidas.',
+                        type: 'error',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    })
+                }
             }, error => {
-                console.log(error);
+                MySwal.fire({
+                    title: 'Inicio de sesión fallido.',
+                    type: 'error',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                })
             })
         }
     }
