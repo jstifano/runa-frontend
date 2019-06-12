@@ -1,69 +1,86 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { withRouter } from 'react-router';
+import { getEntriesByEmployee } from '../../ducks/modules/entry';
 
 class TableEntryByEmployee extends Component {
 
     constructor(props){
         super(props);
         this.state = {
-            user: null
+            user: null,
+            entries: []
         }
     }
 
-    componentWillMount(){
-        let userData = JSON.parse(localStorage.getItem('employee'));
-        let user = JSON.parse(localStorage.getItem('user'));
+    componentWillMount = () => {
+        let employeeData = JSON.parse(localStorage.getItem('employee'));
+        let userData = JSON.parse(localStorage.getItem('user'));
 
-        if(!user){
+        if(!userData){
             this.props.history.push('/login');
         }
         else {
             this.setState({
+                employee: employeeData,
                 user: userData
             })
         }
-
     }
 
-    componentWillUnmount(){
+    componentWillUnmount = () => {
         localStorage.removeItem('employee');
+    }
+
+    componentDidMount = () => {
+        getEntriesByEmployee(this.state.employee.id, (response) => {
+            console.log("jii", response);
+            this.setState({
+                entries: response.entries
+            })
+        })
     }
 
     render(){
         return (
             <div className="pt-4" style={{display: 'flex', alignItems: 'center',width: '100%', height: '100%', position: 'absolute', flexDirection: 'column'}}>
-                <h4>Fechas de entrada/salida de <b>{this.state.user.first_name}</b></h4><br />
+                <h6>Fechas de entrada/salida | <b>{this.state.employee.first_name}</b></h6><br />
                 <table className="table table-bordered" style={{width: '60%'}}>
                     <thead className="thead-dark">
                         <tr>
+                            <th scope="col">#</th>
                             <th scope="col">Fecha de entrada</th>
+                            <th scope="col">Hora de entrada</th>
                             <th scope="col">Fecha de salida</th>
+                            <th scope="col">Hora de salida</th>
                         </tr>
                     </thead>
                     <tbody>
                         {
-                            /* this.state.users.map(user => {
-                                return <tr key={user.id}>
-                                    <td>{user.first_name}</td>
-                                    <td>{user.last_name}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.role}</td>
-                                    <td style={{cursor: 'pointer'}}>
-                                        <span><FontAwesomeIcon icon={Icons.faEdit} /></span>&nbsp;&nbsp;&nbsp;
-                                        <span onClick={() => this.onDeleteUser(user.id)}><FontAwesomeIcon icon={Icons.faTrashAlt} /></span>&nbsp;&nbsp;&nbsp;
-                                        <span><FontAwesomeIcon icon={Icons.faExchangeAlt}/></span>
-                                    </td>
+                            this.state.entries.map((entry, index) => {
+                                return <tr key={entry.id}>
+                                    <td>{index+1}</td>
+                                    <td>{entry.arrival_date.split(' ')[0]}</td>
+                                    <td>{entry.arrival_date.split(' ')[1]}</td>
+                                    <td>{entry.departure_date.split(' ')[0]}</td>
+                                    <td>{entry.departure_date.split(' ')[1]}</td>
                                 </tr>
-                            }) */
+                            })
                         }
                     </tbody>
                 </table><br /><br />
-                <button className="btn btn-primary bt-lg ml-5" style={{width: '10%'}} onClick={() => this.props.history.goBack()}> Volver atrás </button>
+                <button className="btn btn-danger bt-lg ml-5" style={{width: '10%'}} onClick={() => this.props.history.goBack()}> Volver atrás </button>
             </div>
         )
     }
 
 }
 
-export default withRouter(connect(null, null)(TableEntryByEmployee));
+// Mapeo de states a props del componente
+const mapStateToProps = (state) => {
+    return {
+      state: state
+    };
+};
+
+export default withRouter(connect(mapStateToProps, null)(TableEntryByEmployee));

@@ -44,19 +44,29 @@ const renderField = ({
 
 class FormEditEmployee extends Component {
 
-    componentWillMount(){
+    constructor(props){
+        super(props);
+        this.state = {
+            employee: {}
+        };
+    }
+
+    componentWillMount = () => {
         let data = JSON.parse(localStorage.getItem('employee'));
+        this.setState({
+            employee: data
+        });
         // Asigno la data pre cargada del empleado
         this.props.dispatch(change('edit', 'first_name', data.first_name));
         this.props.dispatch(change('edit', 'last_name', data.last_name));
         this.props.dispatch(change('edit', 'email', data.email));
     }
 
-    componentWillUnmount(){
+    componentWillUnmount = () =>{
         localStorage.removeItem('employee');
     }
 
-    handleClick(event){
+    handleClick = (event) => {
         event.preventDefault();
         let id = JSON.parse(localStorage.getItem('user')).id;
         let employee_id = JSON.parse(localStorage.getItem('employee')).id;
@@ -86,7 +96,7 @@ class FormEditEmployee extends Component {
         })
     }
 
-    goToAdmin(event){
+    goToAdmin = (event) => {
         event.preventDefault();
         this.props.history.push('/admin');
     }
@@ -94,6 +104,7 @@ class FormEditEmployee extends Component {
     render(){
         return (
             <div className="absolute-screen flex-container">
+                <h6>Editar empleado | <b>{this.state.employee.first_name}</b></h6><br />
                 <form className="mb-5">
                     <Field name="first_name" type="text" component={renderField} placeholder="Ingrese el primer nombre" label="Nombre" maxLength="30"/>
                     <Field name="last_name" type="text" component={renderField} placeholder="Ingrese el apellido" label="Apellido" maxLength="30"/>

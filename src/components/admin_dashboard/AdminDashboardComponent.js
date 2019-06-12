@@ -35,7 +35,9 @@ class AdminDashboardComponent extends Component {
         }
     }
 
-    
+    /**************************************************************
+    * Simulo el logout dentro de la aplicación, matando la sesión *
+    ***************************************************************/
     logout = () => {
         localStorage.removeItem('user');
         this.props.history.push('/login');
@@ -44,7 +46,7 @@ class AdminDashboardComponent extends Component {
     /***********************************
     * Metodo para eliminar un empleado *
     ************************************/
-    onDeleteUser(data){
+    onDeleteUser = (data) => {
         MySwal.fire({
             title: '¿Quieres eliminar el empleado seleccionado?',
             type: 'question',
@@ -82,14 +84,25 @@ class AdminDashboardComponent extends Component {
         })
     }
 
-    goToEntries(data){
+    /**************************************************************
+    * Método para visualizar las entradas y salidas de un usuario * 
+    ***************************************************************/
+    goToEntries = (data) => {
         localStorage.setItem('employee', JSON.stringify(data));
-        this.props.history.push('/entries/'+data.id);
+        this.props.history.push('/employee/entries/'+data.id);
     }
 
-    goToEdit(data){
+    /***********************************
+    * Método para editar a un empleado *
+    ************************************/
+    goToEdit = (data) =>{
         localStorage.setItem('employee', JSON.stringify(data));
         this.props.history.push('/employee/edit/'+data.id);    
+    }
+
+    addEntry = (data) => {
+        localStorage.setItem('employee', JSON.stringify(data));
+        this.props.history.push('/employee/entry/add/'+data.id);
     }
 
     render(){
@@ -117,7 +130,8 @@ class AdminDashboardComponent extends Component {
                                     <td style={{cursor: 'pointer'}}>
                                         <span  onClick={() => this.goToEdit(user)}><FontAwesomeIcon icon={Icons.faEdit} /></span>&nbsp;&nbsp;&nbsp;
                                         <span onClick={() => this.onDeleteUser(user.id)}><FontAwesomeIcon icon={Icons.faTrashAlt} /></span>&nbsp;&nbsp;&nbsp;
-                                        <span onClick={() => this.goToEntries(user)}><FontAwesomeIcon icon={Icons.faExchangeAlt}/></span>
+                                        <span onClick={() => this.goToEntries(user)}><FontAwesomeIcon icon={Icons.faExchangeAlt}/></span>&nbsp;&nbsp;&nbsp;
+                                        <span onClick={() => this.addEntry(user)}><FontAwesomeIcon icon={Icons.faPlus}/></span>
                                     </td>
                                 </tr>
                             })
@@ -130,5 +144,12 @@ class AdminDashboardComponent extends Component {
     }
 }
 
-export default withRouter(connect(null, null)(AdminDashboardComponent));
+// Mapeo de states a props del componente
+const mapStateToProps = (state) => {
+    return {
+      state: state
+    };
+};
+
+export default withRouter(connect(mapStateToProps, null)(AdminDashboardComponent));
 
