@@ -2,6 +2,11 @@ import React, { Component } from 'react';
 import { reduxForm, Field, change } from 'redux-form';
 import { connect } from "react-redux";
 import { withRouter } from 'react-router';
+import { editUser } from '../../ducks/modules/users';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 const validate = values => {
     const errors = {}
@@ -41,14 +46,49 @@ class FormEditEmployee extends Component {
 
     componentWillMount(){
         let data = JSON.parse(localStorage.getItem('employee'));
+        // Asigno la data pre cargada del empleado
         this.props.dispatch(change('edit', 'first_name', data.first_name));
         this.props.dispatch(change('edit', 'last_name', data.last_name));
         this.props.dispatch(change('edit', 'email', data.email));
     }
 
+    componentWillUnmount(){
+        localStorage.removeItem('employee');
+    }
+
     handleClick(event){
         event.preventDefault();
-        console.log("ok", this.props);
+        let id = JSON.parse(localStorage.getItem('user')).id;
+        let employee_id = JSON.parse(localStorage.getItem('employee')).id;
+        
+        this.props.state.form.edit.values.id = employee_id;
+        editUser(id, this.props.state.form.edit.values, response => {
+            if(response.data.updated){
+                MySwal.fire({
+                    title: 'Se edito exitosamente.',
+                    type: 'success',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                })
+            }
+            else {
+                MySwal.fire({
+                    title: 'No se edito el empleado.',
+                    type: 'error',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                })    
+            }
+        })
+    }
+
+    goToAdmin(event){
+        event.preventDefault();
+        this.props.history.push('/admin');
     }
 
     render(){
@@ -59,6 +99,7 @@ class FormEditEmployee extends Component {
                     <Field name="last_name" type="text" component={renderField} placeholder="Ingrese el apellido" label="Apellido" maxLength="30"/>
                     <Field name="email" type="email" component={renderField} placeholder="Ingrese su correo electrónico" label="Correo electrónico"/>
                     <button className="btn btn-primary" onClick={(event) => this.handleClick(event)}>Editar</button>
+                    <button className="btn btn-danger" style={{float: 'right'}} onClick={(event) => this.goToAdmin(event)}>Volver atrás</button>
                 </form>
             </div>
         )

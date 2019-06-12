@@ -13,9 +13,17 @@ class TableEntryByEmployee extends Component {
 
     componentWillMount(){
         let userData = JSON.parse(localStorage.getItem('employee'));
-        this.setState({
-            user: userData
-        })
+        let user = JSON.parse(localStorage.getItem('user'));
+
+        if(!user){
+            this.props.history.push('/login');
+        }
+        else {
+            this.setState({
+                user: userData
+            })
+        }
+
     }
 
     componentWillUnmount(){

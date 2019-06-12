@@ -18,20 +18,21 @@ class AdminDashboardComponent extends Component {
         };
     }
 
-    componentWillMount = () => {
-        let session = localStorage.getItem('user'); // Obtengo la sesion del localStorage
-        if(!session) this.props.history.push('/login'); // Si no estoy autenticado, mando a login
-    }
-
     componentDidMount = () => {
         let user = JSON.parse(localStorage.getItem('user'));
-        getUsers(user.id, response => {
-            this.setState({
-                users: response.users
+        // Si no estoy autenticado, mando a login
+        if(!user) {
+            this.props.history.push('/login');
+        }
+        else {
+            getUsers(user.id, response => {
+                this.setState({
+                    users: response.users
+                })
+            }, error => {
+                console.log(error);
             })
-        }, error => {
-            console.log(error);
-        })
+        }
     }
 
     

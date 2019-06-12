@@ -10,6 +10,8 @@ const GET_USERS_SUCCESS  = 'GET_USERS_SUCCESS';
 const GET_USERS_FAIL  = 'GET_USERS_FAIL';
 const DELETE_USER_SUCCESS = 'DELETE_USER_SUCCESS';
 const DELETE_USER_FAIL = 'DELETE_USER_FAIL';
+const UPDATE_USER_SUCCESS = 'UPDATE_USER_SUCCESS';
+const UPDATE_USER_FAIL = 'UPDATE_USER_FAIL';
 
 const initialState = {};
 
@@ -40,7 +42,15 @@ export default function userReducer(state = initialState, action = {}) {
       case 'DELETE_USER_FAIL':   
         return {
           ...state
-        }; 
+        };
+      case 'UPDATE_USER_SUCCESS':   
+        return {
+          ...state
+        };
+      case 'UPDATE_USER_FAIL':   
+        return {
+          ...state
+        };
       default:
         return state;
     }
@@ -89,6 +99,20 @@ export async function deleteUser(id, callback) {
   })
   .catch(async error => {
     let err = await userReducer(error, {type: DELETE_USER_FAIL, payload: error}); 
+    callback(err);
+  })
+}
+
+/*****************************************
+* Action creator para editar un empleado * 
+******************************************/
+export async function editUser(id, data, callback) {
+  request.put(env.apiEndpoint + '/user/edit/'+id, data).then(async result => {
+    let response = await userReducer(result, {type: UPDATE_USER_SUCCESS, payload: result});
+    callback(response);
+  })
+  .catch(async error => {
+    let err = await userReducer(error, {type: UPDATE_USER_FAIL, payload: error}); 
     callback(err);
   })
 }
