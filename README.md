@@ -1,6 +1,7 @@
 # runa-frontend
 
 Prueba técnica para la empresa Runa relacionado con un sistema para entrada y salidas de empleados.
+
 Este proyecto fue creado con [Create React App](https://github.com/facebook/create-react-app).
 
 ## Instalación
