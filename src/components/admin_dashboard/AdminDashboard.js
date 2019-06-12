@@ -9,7 +9,7 @@ import withReactContent from 'sweetalert2-react-content';
 
 const MySwal = withReactContent(Swal);
 
-class AdminDashboardComponent extends Component {
+class AdminDashboard extends Component {
 
     constructor(props){
         super(props);
@@ -105,6 +105,10 @@ class AdminDashboardComponent extends Component {
         this.props.history.push('/employee/entry/add/'+data.id);
     }
 
+    goToAddEmployee = () => {
+        this.props.history.push('/employee/add');    
+    }
+
     render(){
         return(
             <div className="pt-4" style={{display: 'flex', alignItems: 'center',width: '100%', height: '100%', position: 'absolute', flexDirection: 'column'}}>
@@ -137,8 +141,10 @@ class AdminDashboardComponent extends Component {
                             })
                         }
                     </tbody>
-                </table><br /><br />
-                <button className="btn btn-primary ml-5" style={{width: '10%'}} onClick={this.logout}> Cerrar sesión </button>
+                </table>
+                <br /><br />
+                <button className="btn btn-success ml-5" style={{width: '13%', alignSelf: 'flex-end', position: 'relative', right: '20%'}} onClick={() => this.goToAddEmployee()}><FontAwesomeIcon icon={Icons.faPlus} />&nbsp;Agregar empleado</button>
+                <button className="btn btn-primary ml-5" style={{width: '10%', alignSelf: 'flex-start', position: 'relative', left: 262, bottom: 32}} onClick={this.logout}><FontAwesomeIcon icon={Icons.faSignOutAlt} />&nbsp; Cerrar sesión </button>
             </div>
         )
     }
@@ -151,5 +157,5 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default withRouter(connect(mapStateToProps, null)(AdminDashboardComponent));
+export default withRouter(connect(mapStateToProps, null)(AdminDashboard));
 

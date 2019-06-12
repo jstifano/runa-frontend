@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { withRouter } from 'react-router';
-import { reduxForm, Field } from 'redux-form';
+import { reduxForm, Field, reset } from 'redux-form';
 import { createEntry } from '../../ducks/modules/entry';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -87,6 +87,7 @@ class FormAddEntry extends Component {
                         showConfirmButton: false,
                         timer: 3000
                     })
+                    this.props.dispatch(reset('addEntry'));
                 }
                 else {
                     MySwal.fire({
@@ -134,7 +135,8 @@ class FormAddEntry extends Component {
 // Redux form para el login
 FormAddEntry = reduxForm({
     form: 'addEntry',
-    fields: ['arrivalDate', 'arrivalHour', 'departureDate', 'departureHour']
+    fields: ['arrivalDate', 'arrivalHour', 'departureDate', 'departureHour'],
+    enableReinitialize: true
 })(FormAddEntry);
 
 // Mapeo de states a props del componente

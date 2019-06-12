@@ -5,6 +5,8 @@ import { connect } from "react-redux";
 import { withRouter } from 'react-router';
 import { reduxForm, Field } from 'redux-form';
 import { login } from '../../ducks/modules/users';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as Icons from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
@@ -117,7 +119,7 @@ class LoginComponent extends Component {
                 <form className="mb-5">
                     <Field name="email" type="email" component={renderField} placeholder="Ingrese su correo electrónico" label="Correo electrónico"/>
                     <Field name="password" type="password" component={renderField} placeholder="Ingrese su contraseña" label="Contraseña" maxLength="16"/>
-                    <button className="btn btn-primary" onClick={(event) => this.handleClick(event)}>Iniciar sesión</button>
+                    <button className="btn btn-primary" onClick={(event) => this.handleClick(event)}><FontAwesomeIcon icon={Icons.faSignInAlt} />&nbsp;Iniciar sesión</button>
                 </form>
             </div>
         )
@@ -128,7 +130,8 @@ class LoginComponent extends Component {
 LoginComponent = reduxForm({
     form: 'login',
     fields: ['email', 'password'],
-    validate: validate
+    validate: validate,
+    enableReinitialize: true
 })(LoginComponent);
 
 // Mapeo de states a props del componente

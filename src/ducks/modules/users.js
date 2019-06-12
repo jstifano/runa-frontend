@@ -12,6 +12,8 @@ const DELETE_USER_SUCCESS = 'DELETE_USER_SUCCESS';
 const DELETE_USER_FAIL = 'DELETE_USER_FAIL';
 const UPDATE_USER_SUCCESS = 'UPDATE_USER_SUCCESS';
 const UPDATE_USER_FAIL = 'UPDATE_USER_FAIL';
+const ADD_USER_SUCCESS = 'ADD_USER_SUCCESS';
+const ADD_USER_FAIL = 'ADD_USER_FAIL';
 
 const initialState = {};
 
@@ -48,6 +50,14 @@ export default function userReducer(state = initialState, action = {}) {
           ...state
         };
       case 'UPDATE_USER_FAIL':   
+        return {
+          ...state
+        };
+      case 'ADD_USER_SUCCESS':   
+        return {
+          ...state
+        };
+      case 'ADD_USER_FAIL':   
         return {
           ...state
         };
@@ -113,6 +123,20 @@ export async function editUser(id, data, callback) {
   })
   .catch(async error => {
     let err = await userReducer(error, {type: UPDATE_USER_FAIL, payload: error}); 
+    callback(err);
+  })
+}
+
+/******************************************
+* Action creator para agregar un empleado * 
+*******************************************/
+export async function addUser(data, callback) {
+  request.post(env.apiEndpoint + '/user/create', data).then(async result => {
+    let response = await userReducer(result, {type: ADD_USER_SUCCESS, payload: result});
+    callback(response);
+  })
+  .catch(async error => {
+    let err = await userReducer(error, {type: ADD_USER_FAIL, payload: error}); 
     callback(err);
   })
 }
