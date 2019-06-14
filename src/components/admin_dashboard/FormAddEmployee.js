@@ -58,6 +58,13 @@ class FormAddEmployee extends Component {
         };
     }
 
+    componentDidMount = () => {
+        let user = JSON.parse(localStorage.getItem('user'));
+        if(!user){
+            this.props.history.push('/login');
+        }
+    }
+
     handleClick = (event) => {
         event.preventDefault();
 
